@@ -1,26 +1,26 @@
-# CacheCraft
+# CacheCraft 2.0
 
-An **adaptive caching system** using **Caffeine (in-memory)** and **Redis (distributed)**, with **metrics collection**, **REST APIs**, and **Dockerized deployment**.  
+An **adaptive caching system** using **Caffeine (in-memory)** and **Redis (distributed)**, with **metrics collection**, **REST APIs**, and **Dockerized deployment**.
 
 ---
 
 ## Features
 
-- Dual-layer caching with **Caffeine (L1)** and **Redis (L2)**  
-- **Adaptive TTL engine** adjusts cache expiration based on access frequency  
-- **Metrics collection and monitoring** for cache performance  
-- RESTful API for cache operations (add/get/clear/configure cache)  
-- **Dockerized deployment** for easy setup  
-- Swagger/OpenAPI documentation for easy testing  
+- Dual-layer caching with **Caffeine (L1)** and **Redis (L2)**
+- **Adaptive TTL engine** adjusts cache expiration based on access frequency
+- **Metrics collection and monitoring** for cache performance
+- RESTful API for cache operations (add/get/clear/configure cache)
+- **Dockerized deployment** for easy setup
+- Swagger/OpenAPI documentation for easy testing
 
 ---
 
 ## Prerequisites
 
-- **Java 17**  
-- **Maven 3.8+**  
-- **Docker and Docker Compose** (optional, for containerized deployment)  
-- **Redis server** (if running without Docker)  
+- **Java 17**
+- **Maven 3.8+**
+- **Docker and Docker Compose** (optional, for containerized deployment)
+- **Redis server** (if running without Docker)
 
 ---
 
@@ -28,27 +28,27 @@ An **adaptive caching system** using **Caffeine (in-memory)** and **Redis (distr
 
 # CacheCraft
 
-An **adaptive caching system** using **Caffeine (in-memory)** and **Redis (distributed)**, with **metrics collection**, **REST APIs**, and **Dockerized deployment**.  
+An **adaptive caching system** using **Caffeine (in-memory)** and **Redis (distributed)**, with **metrics collection**, **REST APIs**, and **Dockerized deployment**.
 
 ---
 
 ## Features
 
-- Dual-layer caching with **Caffeine (L1)** and **Redis (L2)**  
-- **Adaptive TTL engine** adjusts cache expiration based on access frequency  
-- **Metrics collection and monitoring** for cache performance  
-- RESTful API for cache operations (add/get/clear/configure cache)  
-- **Dockerized deployment** for easy setup  
-- Swagger/OpenAPI documentation for easy testing  
+- Dual-layer caching with **Caffeine (L1)** and **Redis (L2)**
+- **Adaptive TTL engine** adjusts cache expiration based on access frequency
+- **Metrics collection and monitoring** for cache performance
+- RESTful API for cache operations (add/get/clear/configure cache)
+- **Dockerized deployment** for easy setup
+- Swagger/OpenAPI documentation for easy testing
 
 ---
 
 ## Prerequisites
 
-- **Java 17**  
-- **Maven 3.8+**  
-- **Docker and Docker Compose** (optional, for containerized deployment)  
-- **Redis server** (if running without Docker)  
+- **Java 17**
+- **Maven 3.8+**
+- **Docker and Docker Compose** (optional, for containerized deployment)
+- **Redis server** (if running without Docker)
 
 ---
 
@@ -62,12 +62,11 @@ com.cachecraft
 ├── service # Business logic
 └── CacheCraftApplication.java # Main application class
 
-
 ---
 
 ## Building the Application
 
-```bash
+````bash
 mvn clean package
 
 ## Running the Application
@@ -80,7 +79,8 @@ mvn clean package
 
 ```bash
 mvn spring-boot:run
-```
+````
+
 Or:
 
 ```bash
@@ -159,6 +159,6 @@ v
 Return Data -> Update L1 & L2 caches
 ```
 
-- **Cache Hit:** Fast response from memory  
-- **Cache Miss:** Data fetched from DB, then stored in cache  
+- **Cache Hit:** Fast response from memory
+- **Cache Miss:** Data fetched from DB, then stored in cache
 - **Evictions:** Old or unused entries removed automatically
