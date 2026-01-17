@@ -54,34 +54,6 @@ An **adaptive caching system** using **Caffeine (in-memory)** and **Redis (distr
 
 ## Project Structure
 
-# CacheCraft
-
-An **adaptive caching system** using **Caffeine (in-memory)** and **Redis (distributed)**, with **metrics collection**, **REST APIs**, and **Dockerized deployment**.  
-
----
-
-## Features
-
-- Dual-layer caching with **Caffeine (L1)** and **Redis (L2)**  
-- **Adaptive TTL engine** adjusts cache expiration based on access frequency  
-- **Metrics collection and monitoring** for cache performance  
-- RESTful API for cache operations (add/get/clear/configure cache)  
-- **Dockerized deployment** for easy setup  
-- Swagger/OpenAPI documentation for easy testing  
-
----
-
-## Prerequisites
-
-- **Java 17**  
-- **Maven 3.8+**  
-- **Docker and Docker Compose** (optional, for containerized deployment)  
-- **Redis server** (if running without Docker)  
-
----
-
-## Project Structure
-
 com.cachecraft
 ├── config # Configuration classes (Caffeine, Redis, etc.)
 ├── controller # REST API controllers
