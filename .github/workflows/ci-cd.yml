@@ -13,33 +13,29 @@ jobs:
         image: redis:7
         ports:
           - 6379:6379
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 5s
-          --health-timeout 3s
-          --health-retries 5
 
     steps:
+      # Checkout repo
       - uses: actions/checkout@v4
 
-      # ☕ Java Setup
+      # Setup Java
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      # 📦 Build App
+      # Build Spring Boot app
       - name: Build Application
         run: mvn -B clean package -DskipTests
 
-      # 🚀 Start Spring Boot
+      # Start the app
       - name: Start CacheCraft
         run: |
           nohup java -jar target/cachecraft-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
           sleep 5
 
-      # ⏳ Wait for readiness (Actuator is on 8081)
+      # Wait for actuator readiness (port 8081)
       - name: Wait for Application to Start
         run: |
           for i in {1..40}; do
@@ -50,42 +46,32 @@ jobs:
             sleep 2
           done
 
-          echo "App failed to start"
+          echo "Application failed to start"
           cat app.log
           exit 1
 
-      # 📮 Install Postman CLI (manual install)
-      - name: Install Postman CLI
-        run: |
-          curl -L https://dl-cli.pstmn.io/linux/x64/postman-cli.tar.gz -o postman-cli.tar.gz
-          tar -xzf postman-cli.tar.gz
-          sudo mv postman-cli/postman /usr/local/bin/postman
-          sudo chmod +x /usr/local/bin/postman
-          postman --version
-
-      # 🔐 Login using API Key
-      - name: Authenticate Postman CLI
-        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
-
-      # 🧪 Run Collection From Postman Cloud
-      - name: Run Cache Validation Collection
-        run: |
-          postman collection run "CacheCraft Behavior Suite" \
-            --environment "ci" \
-            --env-var baseUrl=http://localhost:8080 \
-            --env-var metricsUrl=http://localhost:8081 \
-            --bail \
-            --reporters cli,json \
+      # ✅ Official Postman CLI Action (THIS installs CLI correctly)
+      - name: Run Postman CLI
+        uses: postmanlabs/postman-cli-action@v1
+        with:
+          api-key: ${{ secrets.POSTMAN_API_KEY }}
+          command: >
+            postman collection run "CacheCraft Behavior Suite"
+            --environment "ci"
+            --env-var baseUrl=http://localhost:8080
+            --env-var metricsUrl=http://localhost:8081
+            --bail
+            --reporters cli,json
             --reporter-json-export cache-report.json
 
-      # 📊 Upload report
+      # Upload report
       - name: Upload Test Report
         uses: actions/upload-artifact@v4
         with:
           name: cache-report
           path: cache-report.json
 
-      # 📜 Upload logs (for debugging if needed)
+      # Upload logs for debugging
       - name: Upload Application Logs
         if: always()
         uses: actions/upload-artifact@v4
