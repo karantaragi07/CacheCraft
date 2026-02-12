@@ -22,51 +22,52 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # ☕ Java Setup
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
+      # 📦 Build App
       - name: Build Application
         run: mvn -B clean package -DskipTests
 
+      # 🚀 Start Spring Boot
       - name: Start CacheCraft
         run: |
-          echo "Starting Spring Boot application..."
           nohup java -jar target/cachecraft-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
           sleep 5
 
+      # ⏳ Wait for readiness (Actuator is on 8081)
       - name: Wait for Application to Start
         run: |
-          echo "Waiting for application readiness..."
-
           for i in {1..40}; do
-            STATUS=$(curl -s http://localhost:8081/actuator/health | grep '"status":"UP"' || true)
-
-            if [ ! -z "$STATUS" ]; then
+            if curl -s http://localhost:8081/actuator/health | grep '"status":"UP"'; then
               echo "Application is UP!"
               exit 0
             fi
-
-            echo "Still starting..."
             sleep 2
           done
 
-          echo "Application failed to start!"
-          echo "===== APPLICATION LOGS ====="
+          echo "App failed to start"
           cat app.log
           exit 1
 
+      # 📮 Install Postman CLI (manual install)
       - name: Install Postman CLI
         run: |
-          echo "Installing Postman CLI..."
-          curl -fsSL https://dl-cli.pstmn.io/install/linux.sh -o postman-install.sh
-          bash postman-install.sh
+          curl -L https://dl-cli.pstmn.io/linux/x64/postman-cli.tar.gz -o postman-cli.tar.gz
+          tar -xzf postman-cli.tar.gz
+          sudo mv postman-cli/postman /usr/local/bin/postman
+          sudo chmod +x /usr/local/bin/postman
+          postman --version
 
-      - name: Verify Postman CLI
-        run: postman --version
+      # 🔐 Login using API Key
+      - name: Authenticate Postman CLI
+        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
 
+      # 🧪 Run Collection From Postman Cloud
       - name: Run Cache Validation Collection
         run: |
           postman collection run "CacheCraft Behavior Suite" \
@@ -77,12 +78,14 @@ jobs:
             --reporters cli,json \
             --reporter-json-export cache-report.json
 
+      # 📊 Upload report
       - name: Upload Test Report
         uses: actions/upload-artifact@v4
         with:
           name: cache-report
           path: cache-report.json
 
+      # 📜 Upload logs (for debugging if needed)
       - name: Upload Application Logs
         if: always()
         uses: actions/upload-artifact@v4
