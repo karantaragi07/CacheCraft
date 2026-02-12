@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -33,28 +33,38 @@ jobs:
 
       - name: Start CacheCraft
         run: |
+          echo "Starting Spring Boot application..."
           nohup java -jar target/cachecraft-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
+          sleep 5
 
       - name: Wait for Application to Start
         run: |
-          echo "Waiting for app to be ready..."
-          for i in {1..30}; do
-            if curl -s http://localhost:8080/actuator/health | grep UP; then
-              echo "Application started!"
+          echo "Waiting for application readiness..."
+
+          for i in {1..40}; do
+            STATUS=$(curl -s http://localhost:8081/actuator/health | grep '"status":"UP"' || true)
+
+            if [ ! -z "$STATUS" ]; then
+              echo "Application is UP!"
               exit 0
             fi
+
+            echo "Still starting..."
             sleep 2
           done
-          echo "App failed to start"
+
+          echo "Application failed to start!"
+          echo "===== APPLICATION LOGS ====="
           cat app.log
           exit 1
 
       - name: Install Postman CLI
         run: |
+          echo "Installing Postman CLI..."
           curl -fsSL https://dl-cli.pstmn.io/install/linux.sh -o postman-install.sh
           bash postman-install.sh
 
-      - name: Verify Postman Install
+      - name: Verify Postman CLI
         run: postman --version
 
       - name: Run Cache Validation Collection
@@ -72,3 +82,10 @@ jobs:
         with:
           name: cache-report
           path: cache-report.json
+
+      - name: Upload Application Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-log
+          path: app.log
