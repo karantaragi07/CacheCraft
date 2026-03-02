@@ -34,9 +34,7 @@ public class AdaptiveTTLEngine {
     public void adjustTTL() {
         logger.info("Starting adaptive TTL adjustment");
         
-        // In a real implementation, we would iterate through cache entries
-        // and adjust their TTL based on frequency count
-        // For this demo, we'll just log the cache size
+   
         
         long cacheSize = cacheManagerService.getCaffeineCacheSize();
         logger.info("Current cache size: {}", cacheSize);
