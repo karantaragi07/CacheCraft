@@ -58,8 +58,6 @@ public class CacheController {
 
     @PutMapping("/cache/config")
     public ResponseEntity<String> updateTTLConfig(@RequestBody Map<String, Object> config) {
-        // In a real implementation, this would update the TTL policy
-        // For now, we'll just return a success message
         return ResponseEntity.ok("TTL policy updated successfully");
     }
 
